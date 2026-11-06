@@ -6,10 +6,16 @@
 <meta name="color-scheme" content="light">
 <title>R&amp;D Center Europe – Navigation</title>
 <style>
+  /* Lets the gradient angle be animated smoothly */
+  @property --a {
+    syntax: "<angle>";
+    inherits: false;
+    initial-value: 0deg;
+  }
+
   :root {
-    --blue-deep: #003781;   /* Allianz blue */
-    --border: rgba(0, 55, 129, .28);
-    --border-hover: rgba(0, 55, 129, .65);
+    --blue-deep: #003781;   /* Allianz dark blue */
+    --blue-light: #00a0dc;  /* Allianz light blue */
     --shadow: 0 1px 3px rgba(0, 55, 129, .06), 0 2px 8px rgba(0, 55, 129, .05);
     --shadow-hover: 0 4px 14px rgba(0, 55, 129, .14), 0 2px 4px rgba(0, 55, 129, .06);
     box-sizing: border-box;
@@ -41,15 +47,26 @@
   }
 
   a.item {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
     min-height: 56px;
-    padding: 10px 26px;
-    background: #ffffff;
-    border: 1px solid var(--border);
-    border-radius: 18px;
+    padding: 10px 28px;
+
+    /* One continuous gradient border: white fill inside, rotating conic gradient in the border area.
+       Mostly #003781, with a soft #00A0DC accent that wraps seamlessly (first stop = last stop). */
+    border: 1.5px solid transparent;
+    border-radius: 14px;
+    background:
+      linear-gradient(#ffffff, #ffffff) padding-box,
+      conic-gradient(from var(--a),
+        var(--blue-deep) 0%,
+        var(--blue-deep) 62.5%,
+        var(--blue-light) 81.25%,
+        var(--blue-deep) 100%) border-box;
+    animation: flow 18s linear infinite;
+
     box-shadow: var(--shadow);
     color: var(--blue-deep);
     font-size: 15px;
@@ -61,14 +78,18 @@
     cursor: pointer;
     outline: none;
     transition: transform .25s cubic-bezier(.2,.7,.2,1),
-                box-shadow .25s ease,
-                border-color .25s ease;
+                box-shadow .25s ease;
   }
+  @keyframes flow { to { --a: 360deg; } }
+  a.item:nth-child(2) { animation-delay: -4.5s; }
+  a.item:nth-child(3) { animation-delay: -9s; }
+  a.item:nth-child(4) { animation-delay: -13.5s; }
+
   /* open-link arrow: hidden by default, slides in from the top-right on hover */
   .arrow {
     position: absolute;
-    top: 11px;
-    right: 13px;
+    top: 12px;
+    right: 15px;
     width: 14px;
     height: 14px;
     fill: none;
@@ -86,13 +107,11 @@
     a.item:hover {
       transform: translateY(-3px);
       box-shadow: var(--shadow-hover);
-      border-color: var(--border-hover);
     }
   }
   a.item:focus-visible {
     transform: translateY(-3px);
     box-shadow: var(--shadow-hover);
-    border-color: var(--border-hover);
     outline: 2px solid var(--blue-deep);
     outline-offset: 3px;
   }
@@ -112,10 +131,11 @@
   @media (max-height: 300px) and (max-width: 460px) {
     body { padding: 8px 14px; }
     .nav { gap: 8px; }
-    a.item { min-height: 42px; padding: 6px 26px; font-size: 14px; }
+    a.item { min-height: 42px; padding: 6px 28px; font-size: 14px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
+    a.item { animation: none; }
     * { transition-duration: .01ms !important; }
   }
 </style>
